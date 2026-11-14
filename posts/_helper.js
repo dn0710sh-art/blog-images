@@ -63,9 +63,7 @@
   window.__pub = async (gid) => {
     const res = { gid };
     try {
-      const a = [...document.querySelectorAll('a')].find(x => x.getAttribute('href') === '/posts/create');
-      if (!a) { res.err = 'no create link'; return JSON.stringify(res); }
-      a.click();
+      if (location.pathname !== '/posts/create') { res.err = 'not on create page: ' + location.pathname; return JSON.stringify(res); }
       const sb = await waitFor(() => [...document.querySelectorAll('button')].find(b => b.innerText.trim() === '開始寫文章'), 10000);
       if (sb) sb.click();
       const ok = await waitFor(() => /\/posts\/\d+$/.test(location.pathname) && document.querySelector('.jodit-wysiwyg') && document.querySelectorAll('button[role=combobox]').length >= 7, 20000);
