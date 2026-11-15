@@ -134,7 +134,7 @@
         f.contentWindow.eval(src);
         const r = JSON.parse(await f.contentWindow.__runAll(String(gid)));
         Object.assign(out, r); delete out.retry;
-        if (!r.err || !/editor not ready|no editor/.test(r.err)) return out;
+        if (!r.err || !/editor not ready|no editor|check failed/.test(r.err)) return out;
         out.err = r.err;
       } catch (e) { out.err = String(e); }
       finally { f.remove(); }
