@@ -82,6 +82,8 @@
       const good = cb[0] === '我最愛蝦皮好物' && cb[1] === '生活綜合' && cb[2] === '生活綜合' && cb[3] === '公開' && t.length > 5 && imgs > 0;
       if (!good) { res.err = 'check failed ' + log.join(','); return JSON.stringify(res); }
       if (!doPublish) return JSON.stringify(res);
+      const nb = [...document.querySelectorAll('button')].find(b => b.innerText.trim() === '設定為現在時間');
+      if (nb) { fullClick(nb); await sleep(500); }
       const pb = [...document.querySelectorAll('button[type=submit]')].find(b => b.innerText.trim() === '發佈');
       if (!pb) { res.err = 'no publish btn'; return JSON.stringify(res); }
       fullClick(pb);
