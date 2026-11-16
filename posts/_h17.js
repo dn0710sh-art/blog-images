@@ -150,6 +150,7 @@
     let bad = 0;
     for (const gid of gids) {
       if (window.__stop) { window.__halt = 'stopped'; break; }
+      while (document.visibilityState === 'hidden' && !window.__stop) await sleep(5000);
       if (window.__results.some(r => String(r.gid) === String(gid) && r.published)) continue;
       let r = await runOne(gid, src);
       if (r.retry) { await sleep(3000); r = await runOne(gid, src); }
