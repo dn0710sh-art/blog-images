@@ -45,7 +45,8 @@
       const html = await (await jget(base + 't_' + gid + '.html')).text();
       const cur = await (await fetch('/api/posts/' + id, { credentials: 'include' })).json();
       out.old = cur.title;
-      if (cur.title === meta.title && cur.contents === html) { out.same = true; out.done = true; return out; }
+      const cs = (x) => (x && x.contents && typeof x.contents === 'object' ? x.contents.contents : x && x.contents) || '';
+      if (cur.title === meta.title && cs(cur).includes('rel="nofollow sponsored noopener"') && cs(cur).includes('2027') && !cs(cur).includes('數據更新時間')) { out.same = true; out.done = true; return out; }
       f = document.createElement('iframe');
       f.style.cssText = 'position:fixed;left:0;top:0;width:1400px;height:900px;opacity:0.01;pointer-events:none;border:0';
       f.src = '/posts/' + id; document.body.appendChild(f);
@@ -76,11 +77,11 @@
       for (let i = 0; i < 50; i++) {
         await sleep(500);
         try { c2 = await (await fetch('/api/posts/' + id, { credentials: 'include' })).json(); } catch (e) {}
-        if (c2 && c2.title === meta.title && c2.contents !== cur.contents) break;
+        if (c2 && c2.title === meta.title && cs(c2) !== cs(cur)) break;
       }
       out.status = c2 && c2.status;
-      out.done = !!(c2 && c2.title === meta.title && c2.contents !== cur.contents && c2.status === 'active');
-      if (c2) { out.newImgs = (c2.contents.match(/<img/g) || []).length; out.newLen = c2.contents.length; }
+      out.done = !!(c2 && c2.title === meta.title && cs(c2) !== cs(cur) && c2.status === 'active');
+      if (c2) { out.newImgs = (cs(c2).match(/<img/g) || []).length; out.newLen = cs(c2).length; }
     } catch (e) { out.err = String(e); }
     finally { if (f) f.remove(); }
     return out;
